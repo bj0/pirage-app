@@ -10,10 +10,14 @@ import org.jetbrains.anko.*
 
 /**
  * Created by Brian Parma on 1/27/16.
+ *
+ * Updates widget.
  */
 class PirageWidgetProvider : AppWidgetProvider(), AnkoLogger {
     companion object : AnkoLogger {
-        // update the widget, called from monitor service
+        /**
+         * Updates the widget.  Can be called from other services
+         */
         fun updateWidgets(context: Context, isOpen: Boolean) {
 
             val manager = AppWidgetManager.getInstance(context)
@@ -34,8 +38,9 @@ class PirageWidgetProvider : AppWidgetProvider(), AnkoLogger {
 
     override fun onUpdate(context: Context?, appWidgetManager: AppWidgetManager?, appWidgetIds: IntArray?) {
         // sent intent to service (it starts and refreshes)
-        warn("onupdate: $context")
-        context?.startService<PirageMonitorService>("update-widget" to true)
-    }
+//        context?.startService<PirageMonitorService>("update-widget" to true)
+        if( context == null ) return
 
+        updateWidgets(context, MainApplication.isOpen ?: false)
+    }
 }

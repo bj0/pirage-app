@@ -40,13 +40,13 @@ class MainActivity : AppCompatActivity() {
                     onLongClick { toast("test caption"); true }
                 }
 
-                button("Start Service"){
-                    onClick { owner.startServer() }
-                }.lparams(width = matchParent)
+//                button("Start Service"){
+//                    onClick { owner.startServer() }
+//                }.lparams(width = matchParent)
 
-                button("Stop Service"){
-                    onClick { owner.stopServer() }
-                }.lparams(width = matchParent)
+//                button("Stop Service"){
+//                    onClick { owner.stopServer() }
+//                }.lparams(width = matchParent)
 
                 button("Toggle Door"){
                     onClick{ PirageApi.sendClick() }
@@ -55,7 +55,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    fun startServer() = startService<PirageMonitorService>()
+//    fun startServer() = startService<PirageMonitorService>()
 
-    fun stopServer() = stopService(intentFor<PirageMonitorService>())
+//    fun stopServer() = stopService(intentFor<PirageMonitorService>())
 }

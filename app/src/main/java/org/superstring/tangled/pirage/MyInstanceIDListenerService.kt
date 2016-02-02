@@ -7,6 +7,8 @@ import org.jetbrains.anko.startService
 
 /**
  * Created by Brian Parma on 1/28/16.
+ *
+ * Called by GCM service when we need to re-register.  Boilerplate
  */
 
 class MyInstanceIDListenerService : InstanceIDListenerService() {

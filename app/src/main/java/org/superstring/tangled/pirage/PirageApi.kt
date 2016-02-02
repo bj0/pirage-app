@@ -16,6 +16,8 @@ import javax.net.ssl.TrustManagerFactory
 
 /**
  * Created by Brian Parma on 1/27/16.
+ *
+ * Used to communicate with Pirage server.
  */
 object PirageApi: AnkoLogger {
     val server = "https://tangled.superstring.org"

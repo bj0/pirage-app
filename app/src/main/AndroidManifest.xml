@@ -32,7 +32,7 @@
         <!-- widget service -->
         <service android:name=".ClickService" android:exported="false"/>
         <service android:name=".RegisterService" android:exported="false"/>
-        <service android:name=".PirageMonitorService" android:exported="false"/>
+        <!--<service android:name=".PirageMonitorService" android:exported="false"/>-->
 
         <!-- widget provider -->
         <receiver android:name=".PirageWidgetProvider">

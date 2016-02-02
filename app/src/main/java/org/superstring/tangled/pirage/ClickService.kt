@@ -6,6 +6,8 @@ import org.jetbrains.anko.*
 
 /**
  * Created by Brian Parma on 1/27/16.
+ *
+ * Sends a 'click' to the server.
  */
 class ClickService : IntentService("ClickService"), AnkoLogger {
     override fun onHandleIntent(intent: Intent?) {
