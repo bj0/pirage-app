@@ -30,10 +30,10 @@ dependencies {
     compile 'com.android.support:design:23.1.1'
     compile "com.google.android.gms:play-services-gcm:8.4.0"
     compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
-    compile 'org.jetbrains.anko:anko-sdk23:0.8'
+    compile 'org.jetbrains.anko:anko-sdk23:0.8.2'
 }
 buildscript {
-    ext.kotlin_version = '1.0.0-beta-4589'
+    ext.kotlin_version = '1.0.0-rc-1036'
     repositories {
         mavenCentral()
     }

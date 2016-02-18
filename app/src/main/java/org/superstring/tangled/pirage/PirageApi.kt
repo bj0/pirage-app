@@ -1,8 +1,10 @@
 package org.superstring.tangled.pirage
 
+import android.graphics.BitmapFactory
 import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.error
 import org.json.JSONObject
+import java.io.ByteArrayOutputStream
 import java.io.IOException
 import java.net.HttpURLConnection
 import java.net.URL
@@ -19,7 +21,7 @@ import javax.net.ssl.TrustManagerFactory
  *
  * Used to communicate with Pirage server.
  */
-object PirageApi: AnkoLogger {
+object PirageApi : AnkoLogger {
     val server = "https://tangled.superstring.org"
     val sslContext by lazy {
         // assuming this can only be called after Application is created
@@ -49,15 +51,17 @@ object PirageApi: AnkoLogger {
         sslContext
     }
 
-    fun sendRequest(type: String, url: String): String? {
+    fun sendRequest(type: String, url: String): ByteArrayOutputStream? {
         val url = URL(url)
         val connection = url.openConnection() as HttpURLConnection
+        val baos = ByteArrayOutputStream()
         try {
             if (connection is HttpsURLConnection) connection.sslSocketFactory = sslContext.socketFactory
             connection.requestMethod = type
             connection.connectTimeout = 1500
             connection.readTimeout = 1500
-            return connection.inputStream.reader().use { it.readText() }
+            connection.inputStream.copyTo(baos)
+            return baos
         } catch(e: IOException) {
             error("failed to send request: ${e.toString()}")
             return null
@@ -66,13 +70,18 @@ object PirageApi: AnkoLogger {
         }
     }
 
-    fun sendClick() = sendRequest("POST", server + "/click")
+    fun post(url: String) = sendRequest("POST", url)
+    fun getString(url: String) = sendRequest("GET", url)?.toString()
+    fun getBitmap(url: String) = sendRequest("GET", url)?.let { BitmapFactory.decodeByteArray(it.toByteArray(), 0, it.size()) }
 
-    fun getStatus() = sendRequest("GET", server + "/status")?.let {
+    fun sendClick() = post(server + "/click")
+
+    fun getStatus() = getString(server + "/status")?.let {
         val jso = JSONObject(it)
         PirageStatus(jso.getBoolean("dweet_enabled"), jso.getBoolean("locked"), jso.getBoolean("mag"))
     } ?: PirageStatus(false, false, false)
 
+    fun getImage() = getBitmap(server + "/cam/image")
 }
 
 data class PirageStatus(val dweetEnabled: Boolean, val locked: Boolean, val open: Boolean)

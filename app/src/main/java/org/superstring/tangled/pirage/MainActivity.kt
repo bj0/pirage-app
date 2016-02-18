@@ -2,11 +2,13 @@ package org.superstring.tangled.pirage
 
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
+import android.view.Gravity
 import android.view.Menu
 import android.view.MenuItem
+import android.widget.ImageView
 import org.jetbrains.anko.*
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), AnkoLogger {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -38,24 +40,45 @@ class MainActivity : AppCompatActivity() {
             verticalLayout {
                 textView("Howdy?") {
                     onLongClick { toast("test caption"); true }
+                    verticalGravity = Gravity.CENTER_HORIZONTAL
                 }
 
-//                button("Start Service"){
-//                    onClick { owner.startServer() }
-//                }.lparams(width = matchParent)
+                button("Toggle Door") {
+                    onClick { PirageApi.sendClick() }
+                    backgroundResource = R.drawable.btn_green_matte
+                }.lparams(height = wrapContent, width = matchParent) { margin = 25 }
 
-//                button("Stop Service"){
-//                    onClick { owner.stopServer() }
-//                }.lparams(width = matchParent)
+                val img = imageView {
+                    imageResource = R.drawable.loading
+                    scaleType = ImageView.ScaleType.FIT_XY
+                    adjustViewBounds = true
+                }.lparams(height = wrapContent, width = matchParent) {
+                    leftMargin = 25
+                    rightMargin = 25
+                }
 
-                button("Toggle Door"){
-                    onClick{ PirageApi.sendClick() }
-                }.lparams(width = matchParent)
+                button("Get Image") {
+                    backgroundResource = R.drawable.btn_green_matte
+
+                    onClick { owner.refreshImage(img) }
+                }.lparams(height = wrapContent, width = matchParent) { margin = 25 }
             }
         }
     }
 
-//    fun startServer() = startService<PirageMonitorService>()
+    fun refreshImage(view: ImageView) {
+        async() {
+            info("starting get")
+            val image = PirageApi.getImage()
+            info("get image got $image")
 
-//    fun stopServer() = stopService(intentFor<PirageMonitorService>())
+            runOnUiThread {
+                if( image != null )
+                    view.imageBitmap = image
+                else
+                    view.imageResource = R.drawable.fail
+            }
+
+        }
+    }
 }
