@@ -2,7 +2,6 @@ package org.superstring.tangled.pirage
 
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
-import android.view.Gravity
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.ImageView
@@ -38,10 +37,10 @@ class MainActivity : AppCompatActivity(), AnkoLogger {
     class MainActivityUI : AnkoComponent<MainActivity> {
         override fun createView(ui: AnkoContext<MainActivity>) = with(ui) {
             verticalLayout {
-                textView("Howdy?") {
-                    onLongClick { toast("test caption"); true }
-                    verticalGravity = Gravity.CENTER_HORIZONTAL
-                }
+//                textView("Howdy?") {
+//                    onLongClick { toast("test caption"); true }
+//                    verticalGravity = Gravity.CENTER_HORIZONTAL
+//                }
 
                 button("Toggle Door") {
                     onClick { PirageApi.sendClick() }
@@ -60,7 +59,13 @@ class MainActivity : AppCompatActivity(), AnkoLogger {
                 button("Get Image") {
                     backgroundResource = R.drawable.btn_green_matte
 
-                    onClick { owner.refreshImage(img) }
+                    onClick {
+                        img.imageResource = R.drawable.loading
+                        owner.refreshImage(img)
+//                        async() {
+//                            PirageApi.getStatus()
+//                        }
+                    }
                 }.lparams(height = wrapContent, width = matchParent) { margin = 25 }
             }
         }
