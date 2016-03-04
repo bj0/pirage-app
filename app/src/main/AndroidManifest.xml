@@ -24,7 +24,6 @@
             android:theme="@style/AppTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
@@ -32,7 +31,6 @@
         <!-- widget service -->
         <service android:name=".ClickService" android:exported="false"/>
         <service android:name=".RegisterService" android:exported="false"/>
-        <!--<service android:name=".PirageMonitorService" android:exported="false"/>-->
 
         <!-- widget provider -->
         <receiver android:name=".PirageWidgetProvider">
@@ -44,9 +42,6 @@
             <meta-data android:name="android.appwidget.provider"
                 android:resource="@xml/widgetproviderinfo"/>
         </receiver>
-
-        <!-- mqtt service-->
-        <!--<service android:name="org.superstring.tangled.pirage.service.MqttService"></service>-->
 
         <receiver
             android:name="com.google.android.gms.gcm.GcmReceiver"
@@ -71,7 +66,5 @@
                 <action android:name="com.google.android.gms.iid.InstanceID" />
             </intent-filter>
         </service>
-
     </application>
-
 </manifest>
