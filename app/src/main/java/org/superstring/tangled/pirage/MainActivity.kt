@@ -37,10 +37,7 @@ class MainActivity : AppCompatActivity(), AnkoLogger {
     class MainActivityUI : AnkoComponent<MainActivity> {
         override fun createView(ui: AnkoContext<MainActivity>) = with(ui) {
             verticalLayout {
-//                textView("Howdy?") {
-//                    onLongClick { toast("test caption"); true }
-//                    verticalGravity = Gravity.CENTER_HORIZONTAL
-//                }
+                backgroundResource = R.color.background_material_dark
 
                 button("Toggle Door") {
                     onClick { PirageApi.sendClick() }
@@ -62,9 +59,6 @@ class MainActivity : AppCompatActivity(), AnkoLogger {
                     onClick {
                         img.imageResource = R.drawable.loading
                         owner.refreshImage(img)
-//                        async() {
-//                            PirageApi.getStatus()
-//                        }
                     }
                 }.lparams(height = wrapContent, width = matchParent) { margin = 25 }
             }
