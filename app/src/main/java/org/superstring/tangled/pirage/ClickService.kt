@@ -22,8 +22,9 @@ class ClickService : IntentService("ClickService"), AnkoLogger {
                 break
         }
 
+        val failed = retry == 0
         onUiThread {
-            if ( retry == 0)
+            if ( failed )
                 toast("failed to send click request")
             else
                 toast("sent request")
