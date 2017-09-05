@@ -11,7 +11,6 @@ import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.info
 import org.jetbrains.anko.intentFor
 import org.jetbrains.anko.notificationManager
-//import java.text.SimpleDateFormat
 
 /**
  * Created by Brian Parma on 1/27/16.

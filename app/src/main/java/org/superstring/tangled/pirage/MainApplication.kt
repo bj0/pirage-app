@@ -17,7 +17,7 @@ import org.jetbrains.anko.startService
 
 class MainApplication : Application(), AnkoLogger {
     companion object {
-        var context: Context? = null
+        lateinit var context: Context
         var isOpen : Boolean? = null
     }
 
