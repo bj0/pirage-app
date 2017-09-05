@@ -6,3 +6,10 @@
 .DS_Store
 /build
 /captures
+ca.crt
+ca.key
+ca.p12
+client.crt
+client.csr
+client.key
+client.p12
