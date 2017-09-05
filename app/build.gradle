@@ -29,6 +29,7 @@ dependencies {
     compile 'com.android.support:appcompat-v7:24.2.0'
     compile 'com.android.support:design:24.2.0'
     compile "com.google.android.gms:play-services-gcm:9.4.0"
+    compile 'com.squareup.okhttp3:okhttp:3.4.1'
     compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     compile 'org.jetbrains.anko:anko-sdk23:0.8.2'
 }
