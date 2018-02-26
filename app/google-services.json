@@ -1,7 +1,9 @@
 {
   "project_info": {
     "project_number": "690124355632",
-    "project_id": "pirage-b12b0"
+    "firebase_url": "https://pirage-b12b0.firebaseio.com",
+    "project_id": "pirage-b12b0",
+    "storage_bucket": "pirage-b12b0.appspot.com"
   },
   "client": [
     {
@@ -11,8 +13,29 @@
           "package_name": "org.superstring.tangled.pirage"
         }
       },
-      "oauth_client": [],
-      "api_key": [{ "current_key": "" }],
+      "oauth_client": [
+        {
+          "client_id": "690124355632-a9k4v5u4r0vevm3bi707fhutld95o35v.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "org.superstring.tangled.pirage",
+            "certificate_hash": "6983c2dcfda822e2d35a04ae0099d39f589d52f9"
+          }
+        },
+        {
+          "client_id": "690124355632-4ldhsplsrdd68poqqqu0j4k19op0pl7h.apps.googleusercontent.com",
+          "client_type": 3
+        },
+        {
+          "client_id": "690124355632-6qa935kajbrtrlvu3clg0matkihbl425.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBsNX1gC2XvaCVg-hDsG30tpEd-owzP7uI"
+        }
+      ],
       "services": {
         "analytics_service": {
           "status": 1
@@ -22,7 +45,7 @@
           "other_platform_oauth_client": []
         },
         "ads_service": {
-          "status": 1
+          "status": 2
         }
       }
     }
