@@ -1,11 +1,12 @@
 package org.superstring.tangled.pirage
 
 import android.app.Application
-import android.content.Context
-import org.jetbrains.anko.AnkoLogger
-import org.jetbrains.anko.async
-import org.jetbrains.anko.info
-import org.jetbrains.anko.startService
+import com.google.firebase.messaging.FirebaseMessaging
+import kotlinx.coroutines.experimental.CommonPool
+import kotlinx.coroutines.experimental.launch
+import org.superstring.tangled.pirage.api.getStatus
+import timber.log.Timber
+import timber.log.pirage.info
 
 /**
  * Created by Brian Parma on 1/27/16.
@@ -15,26 +16,25 @@ import org.jetbrains.anko.startService
  * * isOpen - last known status of door used when widget needs an update
  */
 
-class MainApplication : Application(), AnkoLogger {
+class MainApplication : Application() {
     companion object {
-        lateinit var context: Context
-        var isOpen : Boolean? = null
+        var isOpen: Boolean? = null
     }
 
     override fun onCreate() {
         super.onCreate()
-        // save context so we can access it in PirageApi
-        MainApplication.context = applicationContext
 
-        // register for gcm
-        startService<RegisterService>()
+        Timber.plant(Timber.DebugTree())
 
-        async() {
-            isOpen = PirageApi.getStatus().open
-            info("status returned: $isOpen")
+        // register for fcm
+        FirebaseMessaging.getInstance().subscribeToTopic("pirage")
+
+        launch(CommonPool) {
+            isOpen = getStatus().open
+            info { "status returned: $isOpen" }
             // since getting status takes a while, we might get a true after
             // the widget was initialized with false
-            if( isOpen ?: false )
+            if (isOpen == true)
                 PirageWidgetProvider.updateWidgets(applicationContext, true)
         }
     }

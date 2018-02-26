@@ -15,13 +15,14 @@ import org.jetbrains.anko.notificationManager
 /**
  * Created by Brian Parma on 1/27/16.
  *
- * Receives GCM message when door state changes.
+ * Receives FCM message when door state changes.
  */
+class FcmListenerService : FirebaseMessagingService() {
+    override fun onCreate() {
 
-class MyGcmListenerService : FirebaseMessagingService(), AnkoLogger {
     override fun onMessageReceived(message: RemoteMessage) {
-        info("got fcm message from: $message")
         val isOpen = message.data?.get("mag")?.toBoolean()
+        info { "got fcm message from: $isOpen" }
 
         if (isOpen != null) {
             // remember new state

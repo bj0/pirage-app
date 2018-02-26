@@ -5,13 +5,27 @@ import android.support.v7.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.ImageView
-import org.jetbrains.anko.*
+import kotlinx.coroutines.experimental.android.UI
+import kotlinx.coroutines.experimental.launch
+import org.jetbrains.anko.imageBitmap
+import org.jetbrains.anko.imageResource
+import org.jetbrains.anko.setContentView
+import org.superstring.tangled.pirage.api.getImage
+import timber.log.pirage.info
 
-class MainActivity : AppCompatActivity(), AnkoLogger {
+class MainActivity : AppCompatActivity() {
+    lateinit var view: MainActivityUI
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        MainActivityUI().setContentView(this)
+        view = MainActivityUI()
+        view.setContentView(this)
+    }
+
+    override fun onStart() {
+        super.onStart()
+        launch(UI) { refreshImage(view.image) }
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -34,50 +48,15 @@ class MainActivity : AppCompatActivity(), AnkoLogger {
         return super.onOptionsItemSelected(item)
     }
 
-    class MainActivityUI : AnkoComponent<MainActivity> {
-        override fun createView(ui: AnkoContext<MainActivity>) = with(ui) {
-            verticalLayout {
-                backgroundResource = R.color.background_material_dark
+    suspend fun refreshImage(view: ImageView) {
+        view.imageResource = R.drawable.loading
+        info { "starting get" }
+        val image = getImage()
+        info { "get image got $image" }
 
-                button("Toggle Door") {
-                    onClick { PirageApi.sendClick() }
-                    backgroundResource = R.drawable.btn_green_matte
-                }.lparams(height = wrapContent, width = matchParent) { margin = 25 }
-
-                val img = imageView {
-                    imageResource = R.drawable.loading
-                    scaleType = ImageView.ScaleType.FIT_XY
-                    adjustViewBounds = true
-                }.lparams(height = wrapContent, width = matchParent) {
-                    leftMargin = 25
-                    rightMargin = 25
-                }
-
-                button("Get Image") {
-                    backgroundResource = R.drawable.btn_green_matte
-
-                    onClick {
-                        img.imageResource = R.drawable.loading
-                        owner.refreshImage(img)
-                    }
-                }.lparams(height = wrapContent, width = matchParent) { margin = 25 }
-            }
-        }
-    }
-
-    fun refreshImage(view: ImageView) {
-        async() {
-            info("starting get")
-            val image = PirageApi.getImage()
-            info("get image got $image")
-
-            runOnUiThread {
-                if( image != null )
-                    view.imageBitmap = image
-                else
-                    view.imageResource = R.drawable.fail
-            }
-
-        }
+        if (image != null)
+            view.imageBitmap = image
+        else
+            view.imageResource = R.drawable.fail
     }
 }
