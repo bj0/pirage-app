@@ -1,23 +1,25 @@
 package org.superstring.tangled.pirage.api
 
 import android.graphics.BitmapFactory
-import android.util.Log
 import kotlinx.coroutines.experimental.CommonPool
 import kotlinx.coroutines.experimental.withContext
 import okhttp3.OkHttpClient
 import okhttp3.Request
+import okhttp3.RequestBody
 import org.json.JSONObject
 import org.superstring.tangled.pirage.await
+import org.superstring.tangled.pirage.toast
 import splitties.init.appCtx
+import timber.log.pirage.debug
 import timber.log.pirage.err
-import timber.log.pirage.info
 import java.io.IOException
-import java.net.URL
 import java.nio.charset.Charset
 import java.security.KeyStore
 import java.security.cert.CertificateFactory
 import java.security.cert.X509Certificate
-import javax.net.ssl.*
+import javax.net.ssl.KeyManagerFactory
+import javax.net.ssl.SSLContext
+import javax.net.ssl.TrustManagerFactory
 
 /**
  * Created by Brian Parma on 1/27/16.
@@ -29,6 +31,8 @@ import javax.net.ssl.*
  * https://gist.github.com/mtigas/952344
  *
  */
+
+enum class RequestType { GET, POST }
 
 /**
  * Status response from pirage server
@@ -86,36 +90,45 @@ private val sslContext by lazy {
 /**
  * pass an HTTPS request to pirage server
  */
-suspend fun request(url: String): ByteArray? {
+suspend fun request(url: String, type: RequestType = RequestType.GET): ByteArray? {
     return try {
         val request = Request.Builder()
                 .url(url)
+                .apply { if (type == RequestType.POST) post(RequestBody.create(null, "")) }
                 .build()
         val client = OkHttpClient.Builder()
 //                .sslSocketFactory(sslContext.socketFactory, trustManagers[0] as X509TrustManager)
                 .sslSocketFactory(sslContext.socketFactory)
                 .build()
-        withContext(CommonPool) {
-            val response = client.newCall(request).await()
-            if (response.code() == 400) {
-                err { response.body().byteStream().readBytes().toString(Charset.defaultCharset()) }
-                throw IOException("400 Bad Request, check client certs")
+        val response = client.newCall(request).await()
+        debug { "response code=${response.code()}" }
+        when (response.code()) {
+        // this can't be on the main thread
+            200 -> withContext(CommonPool) { response.body().byteStream().readBytes() }
+            else -> {
+                toast("Response Code: ${response.code()}".also { err(it) })
+                null
             }
-            response.body().byteStream().readBytes()
         }
-//        withContext(CommonPool) {
-//            (URL(url).openConnection() as HttpsURLConnection).apply {
-//                sslSocketFactory = sslContext.socketFactory
-//            }.inputStream.readBytes()
-//        }
     } catch (e: Exception) {
         err(e) { "failed to send request" }
         null
     }
 }
 
-suspend fun post(url: String) = request(url)
+/**
+ * send an empty post request to the url
+ */
+suspend fun post(url: String) = request(url, RequestType.POST)
+
+/**
+ * send a get request and return the response as a string
+ */
 suspend fun getString(url: String) = request(url)?.toString(Charset.defaultCharset())
+
+/**
+ * send a get request and return the response as a bitmap
+ */
 suspend fun getBitmap(url: String) = request(url)?.let { BitmapFactory.decodeByteArray(it, 0, it.size) }
 
 /**
@@ -127,13 +140,16 @@ suspend fun sendClick() = post("$SERVER/click")
  * get status of pirage server
  */
 suspend fun getStatus() = getString("$SERVER/status")?.let {
-    err { "it: $it" }
-    val jso = JSONObject(it)
-    err { "jso: $jso" }
-    PirageStatus(
-            jso.getBoolean("notify_enabled"),
-            jso.getBoolean("locked"),
-            jso.getBoolean("mag"))
+    try {
+        val jso = JSONObject(it)
+        PirageStatus(
+                jso.getBoolean("notify_enabled"),
+                jso.getBoolean("locked"),
+                jso.getBoolean("mag"))
+    } catch (e: Exception) {
+        err(e) { "failed to parse json" }
+        null
+    }
 } ?: PirageStatus(false, false, false)
 
 /**
