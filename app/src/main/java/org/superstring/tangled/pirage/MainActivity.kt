@@ -1,20 +1,47 @@
 package org.superstring.tangled.pirage
 
+import android.content.BroadcastReceiver
+import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
 import android.os.Bundle
+import android.support.v4.content.LocalBroadcastManager
 import android.support.v7.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.ImageView
 import kotlinx.coroutines.experimental.android.UI
+import kotlinx.coroutines.experimental.delay
 import kotlinx.coroutines.experimental.launch
 import org.jetbrains.anko.imageBitmap
 import org.jetbrains.anko.imageResource
 import org.jetbrains.anko.setContentView
 import org.superstring.tangled.pirage.api.getImage
 import timber.log.pirage.info
+import java.util.concurrent.TimeUnit
 
 class MainActivity : AppCompatActivity() {
     lateinit var view: MainActivityUI
+
+    private val notificationReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context?, intent: Intent?) {
+            if (intent?.action == NOTIFICATION_ACTION) {
+                // door change, lets update the picture
+                launch(UI) {
+                    refreshImage(view.image)
+                    val isOpen = intent.getBooleanExtra("is_open", false)
+
+                    // if the garage door is opening, lets keep refreshing the image to see it.
+                    if (isOpen) {
+                        repeat(3) {
+                            delay(5, TimeUnit.SECONDS)
+                            refreshImage(view.image)
+                        }
+                    }
+                }
+            }
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -26,6 +53,16 @@ class MainActivity : AppCompatActivity() {
     override fun onStart() {
         super.onStart()
         launch(UI) { refreshImage(view.image) }
+    }
+
+    override fun onPause() {
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(notificationReceiver)
+        super.onPause()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        LocalBroadcastManager.getInstance(this).registerReceiver(notificationReceiver, IntentFilter(NOTIFICATION_ACTION))
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
