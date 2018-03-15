@@ -3,10 +3,11 @@ package org.superstring.tangled.pirage
 import android.app.PendingIntent
 import android.appwidget.AppWidgetManager
 import android.appwidget.AppWidgetProvider
-import android.content.ComponentName
-import android.content.Context
+import android.content.*
+import android.support.v4.app.JobIntentService
 import android.widget.RemoteViews
-import org.jetbrains.anko.intentFor
+import splitties.init.appCtx
+import timber.log.pirage.info
 import timber.log.pirage.warn
 
 /**
@@ -16,6 +17,9 @@ import timber.log.pirage.warn
  */
 class PirageWidgetProvider : AppWidgetProvider() {
     companion object {
+
+        const val HACK = "launch.jobintentservice.hack"
+
         /**
          * Updates the widget.  Can be called from other services
          */
@@ -29,7 +33,9 @@ class PirageWidgetProvider : AppWidgetProvider() {
                 RemoteViews(context.packageName, R.layout.widget).apply {
                     setImageViewResource(R.id.button, if (isOpen) R.drawable.open else R.drawable.closed)
                     setOnClickPendingIntent(R.id.button,
-                            PendingIntent.getService(context, 0, context.intentFor<ClickService>(), 0))
+                            PendingIntent.getBroadcast(context, 0,
+                                    Intent(appCtx, ClickReceiver::class.java)
+                                            .setAction(HACK), 0))
                     manager.updateAppWidget(id, this)
                 }
             }
