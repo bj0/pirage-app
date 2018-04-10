@@ -26,8 +26,10 @@
         </activity>
 
         <!-- widget service -->
-        <service android:name=".ClickService" android:exported="false"
+        <service android:name=".ClickJob" android:exported="false"
             android:permission="android.permission.BIND_JOB_SERVICE"/>
+
+        <service android:name=".ClickService" android:exported="false" />
 
         <receiver android:name=".ClickReceiver" android:exported="false">
             <intent-filter>

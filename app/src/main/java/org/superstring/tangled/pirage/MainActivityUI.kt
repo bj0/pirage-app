@@ -5,7 +5,7 @@ import org.jetbrains.anko.*
 import org.jetbrains.anko.sdk25.coroutines.onClick
 
 /**
- * Created by bjp on 9/28/17.
+ * The main UI in Anko
  */
 class MainActivityUI : AnkoComponent<MainActivity> {
     lateinit var image: ImageView
@@ -17,7 +17,7 @@ class MainActivityUI : AnkoComponent<MainActivity> {
             button("Toggle Door") {
                 onClick {
                     isEnabled = false
-                    ClickService.tryClick(ctx)
+                    tryClick(ctx)
                     isEnabled = true
                 }
                 backgroundResource = R.drawable.btn_green_matte

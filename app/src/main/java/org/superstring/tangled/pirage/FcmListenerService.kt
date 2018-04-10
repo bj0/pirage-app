@@ -77,7 +77,8 @@ fun Context.doNotify(isOpen: Boolean) {
             .setDefaults(Notification.DEFAULT_VIBRATE)
             .addAction(
                     if (isOpen) R.mipmap.close_icon else R.mipmap.open_icon,
-                    if (isOpen) "Close" else "Open", PendingIntent.getService(this, 0, intentFor<ClickService>(), 0))
+                    if (isOpen) "Close" else "Open", PendingIntent.getService(this,
+                    0, intentFor<ClickService>(), 0))
 
     val stackBuilder = TaskStackBuilder.create(this)
     stackBuilder.addParentStack(MainActivity::class.java)
